@@ -1,0 +1,115 @@
+/* ===========================
+   FUENTES GENERALES
+   =========================== */
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap');
+
+/* ===========================
+   NAVBAR (header + enlaces)
+   =========================== */
+body {
+  font-family: 'Josefin Sans', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Header superior con isotipo y logotipo */
+.header-top {
+  display: flex;
+  width: 100%;
+  height: 180px;
+  box-sizing: border-box;
+  background-color: #E35110; /* color principal */
+}
+
+/* --- Isotipo (25%) --- */
+.header-top .logo {
+  flex: 0 0 25%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header-top .logo img {
+  max-width: 90%;
+  max-height: 90%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+
+/* --- Logotipo (75%) --- */
+.header-top .header-image {
+  flex: 1 0 75%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 15px; /* espacio entre isotipo y logotipo */
+}
+
+.header-top .header-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Navbar principal */
+nav {
+  display: flex;
+  justify-content: center;
+  background-color: #E35110; /* mismo color que header */
+  font-family: 'Josefin Sans', sans-serif;
+}
+
+nav a {
+  color: #F2BA5C; /* color complementario */
+  text-decoration: none;
+  padding: 14px 20px;
+  font-weight: 600;
+}
+
+nav a:hover {
+  background-color: #B71600; /* hover color complementario */
+  color: #fff;
+}
+
+/* ===========================
+   FOOTER
+   =========================== */
+.footer {
+  display: flex;
+  justify-content: space-between;
+  background-color: #4D1B00; /* color principal oscuro */
+  color: #F2BA5C; /* texto claro */
+  font-family: 'Josefin Sans', sans-serif;
+  padding: 20px;
+}
+
+/* Columnas del footer */
+.footer-section {
+  flex: 1;
+  box-sizing: border-box; /* evita márgenes internos extras */
+  padding: 0 10px; /* separa columnas entre sí */
+}
+
+/* Títulos en footer */
+.footer h3 {
+  color: #E35110;
+  font-family: 'ChunkFiveEx', serif;
+  margin-bottom: 10px;
+}
+
+/* Párrafos en footer */
+.footer p {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* Iframe mapa */
+.footer iframe {
+  border-radius: 8px;
+  width: 100%;
+  height: 200px;
+  border: 0;
+}
