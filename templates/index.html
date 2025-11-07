@@ -3,31 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Despliegue modelos</title>
+    <title>Ahorrapp</title>
+    <link rel="stylesheet" href="static/css/index.css">
 </head>
-<body>
-    {% include 'navbar.html' %}
-
-    <div><h1>Primer modelo de menu</h1>
-    <hr>
-    <p>Este es un modelo de menu <a href="{{ url_for('primer') }}">Primer modelo</a></p>
-    
-
+<body>  
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">AhorrApp</h1>
+        <div class="options">
+            {% if not session.get('logged_in') %}
+            <a class="btn btn-secondary btn-lg" href="{{ url_for('register') }}">Regíster</a>
+            <a  class="btn btn-secondary btn-lg" href="{{ url_for('login') }}">login</a>
+            {% else %}
+            <a class="cerrar" href="{{ url_for('logout') }}">Cerrar sesion</a>
+            {% endif %}
+        </div>
     </div>
-    <br>
-
-    <div><h1>Segundo modelo de menu</h1>
-    <hr>
-    <p>Este es un modelo de menu <a href="{{ url_for('segundo') }}">Segundo modelo</a></p>
-    </div>
-    <br>
-
-    <div><h1>Tercero modelo de menu</h1>
-    <hr>
-    <p>Este es un modelo de menu <a href="{{ url_for ('tercero') }}">Tercer modelo</a></p>
-    </div>
-    <br>
-
-    {% include 'footer.html' %}
 </body>
 </html>

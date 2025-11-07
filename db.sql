@@ -1,0 +1,13 @@
+CREATE DATABASE IF NOT EXISTS `proyecto`;    
+USE `proyecto`;
+
+CREATE USER IF NOT EXISTS 'AhorrApp'@'localhost' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON `proyecto`.* TO 'AhorrApp'@'localhost';
+FLUSH PRIVILEGES;
+
+CREATE TABLE IF NOT EXISTS usuarios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    contrasena VARCHAR(200) NOT NULL
+);

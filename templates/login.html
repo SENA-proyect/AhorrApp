@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/login.css') }}">
+    <title>Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
+<body>
+
+    <canvas id="shaderCanvas"></canvas>
+
+    <div class="login-container">
+        <form action="{{ url_for('login') }}" method="POST" class="form-container">
+            <div class="box">
+                <h1 class="text-center mb-4" style="color: white;">Iniciar Sesión</h1> 
+
+                <div class="form-group"> 
+                    <input type="text" id="email" name="email" placeholder="Correo Electrónico" required>
+                    <label for="email" class="form-label visually-hidden"></label>
+                </div>
+                
+                <div class="form-group">
+                    <input type="password" id="password" name="password" placeholder="Contraseña" required>
+                    <label for="password" class="form-label visually-hidden"></label>
+                </div>
+               
+                <button type="submit" class="boton" style="border-radius: 25px;">Entrar</button>
+            
+                <a href="#" class="enl" style="font-style: none ">¿Olvidaste tu contraseña?</a>
+            
+                <br>
+            
+                <a href="{{ url_for('register') }}" class="enl">¿No tienes una cuenta? <span class="underline">Registrate</span></a>
+
+            </div>
+        </form>
+    </div>
+
+    <!-- ======================================================================================
+                                shaderCanvas
+    ======================================================================================                                 -->
+    <script type="x-shader/x-fragment" id="fragShader">
+precision highp float;
+
+// Variables uniformes que se pasarán desde JavaScript
+uniform vec2 iResolution;
+uniform float iTime;
+
+void main() { 
+    // El código de la animación de verde oscuro metalizado
+    float mr = min(iResolution.x, iResolution.y);
+    vec2 fragCoord = gl_FragCoord.xy;
+    vec2 uv = (fragCoord * 2.0 - iResolution.xy) / mr;
+
+    float d = -iTime * 0.5;
+    float a = 0.0;
+    for (float i = 0.0; i < 8.0; ++i) {
+        a += cos(i - d - a * uv.x);
+        d += sin(uv.y * i + a);
+    }
+    d += iTime * 0.5;
+    vec3 base_dark = vec3(0.05, 0.08, 0.05); 
+    vec3 mid_green = vec3(0.1, 0.35, 0.1); 
+    vec3 metallic_spec = vec3(0.6, 0.7, 0.5); 
+
+    float pattern_factor = dot(uv, vec2(cos(d), sin(a))) * 0.5 + 0.5;
+    
+    pattern_factor *= cos(d * 0.5 + a * 0.3) * 0.5 + 0.5;
+    
+    float shininess = pow(clamp(pattern_factor, 0.0, 1.0), 10.0 + sin(iTime * 0.5) * 5.0);
+    
+    vec3 final_color = mix(base_dark, mid_green, pattern_factor);
+
+    final_color += metallic_spec * shininess * 0.7;
+
+    final_color = pow(final_color, vec3(1.5));
+
+    gl_FragColor = vec4(final_color, 1.0); // Nota: Usamos gl_FragColor para WebGL
+}
+    </script>
+    <!-- ---------------------------------------------------------------------------------------
+                                Fin shaderCanvas
+    --------------------------------------------------------------------------------------- -->
+    
+    <script src="{{ url_for('static', filename='js/login.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+</html>
