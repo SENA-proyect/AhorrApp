@@ -46,9 +46,11 @@ CREATE TABLE IF NOT EXISTS ahorros (
     usuario_id INT NOT NULL,
     categoria VARCHAR(255) NOT NULL,
     monto DECIMAL(12,2) NOT NULL,
-    fecha DATE DEFAULT CURRENT_DATE,
+    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
 );
+
+
 
 CREATE TABLE IF NOT EXISTS gastos (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -56,9 +58,10 @@ CREATE TABLE IF NOT EXISTS gastos (
     categoria VARCHAR(255) NOT NULL,
     monto DECIMAL(12,2) NOT NULL,
     descripcion TEXT,
-    fecha DATE DEFAULT CURRENT_DATE,
+    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
 );
+
 
 
 CREATE TABLE IF NOT EXISTS imprevistos (
@@ -67,9 +70,10 @@ CREATE TABLE IF NOT EXISTS imprevistos (
     categoria VARCHAR(255) NOT NULL,
     monto DECIMAL(12,2) NOT NULL,
     descripcion TEXT,
-    fecha DATE DEFAULT CURRENT_DATE,
+    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
 );
+
 
 
 CREATE TABLE IF NOT EXISTS deudas (
@@ -78,9 +82,10 @@ CREATE TABLE IF NOT EXISTS deudas (
     acreedor VARCHAR(255) NOT NULL,
     monto DECIMAL(12,2) NOT NULL,
     estado ENUM('pendiente', 'pagada', 'en curso') DEFAULT 'pendiente',
-    fecha DATE DEFAULT CURRENT_DATE,
+    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
 );
+
 
 
 CREATE TABLE IF NOT EXISTS modulos_personalizados (
