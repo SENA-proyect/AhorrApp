@@ -19,59 +19,20 @@ CREATE TABLE USUARIOS (
     Email VARCHAR(150) UNIQUE NOT NULL
 );
 
-CREATE TABLE DEPENDIENTES (
-    ID_dependientes  INT AUTO_INCREMENT PRIMARY KEY,
-    Nombre VARCHAR(100) NOT NULL,
-    Ocupacion VARCHAR(150),
-    Edad INT,
-    Relacion VARCHAR(100),
-    ID_usuario INT NOT NULL,
-    FOREIGN KEY (ID_usuario) REFERENCES USUARIOS(ID_usuario)
+-- =======================
+--     TABLA: categorias
+-- =======================
+
+CREATE TABLE CATEGORIAS (
+    ID_categoria INT AUTO_INCREMENT PRIMARY KEY,  
+    Nombre VARCHAR(50) NOT NULL,                  
+    Color CHAR(7),                                
+    Icono VARCHAR(255)                           
 );
 
-
-
--- =======================
---     TABLA: historial
--- =======================
-
-
-CREATE TABLE historial (
-    ID_historial INT AUTO_INCREMENT PRIMARY KEY,
-    ID_usuario INT NOT NULL,
-    accion VARCHAR(200) NOT NULL,    
-    detalles TEXT,               
-    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    
-    FOREIGN KEY (ID_usuario) REFERENCES USUARIOS(ID_usuario)
-        ON DELETE CASCADE
-);
-
-
--- =======================
---     TABLA: notificaciones
--- =======================
-CREATE TABLE NOTIFICACIONES (
-    ID_notificacion INT AUTO_INCREMENT PRIMARY KEY,   
-    ID_usuario INT NOT NULL,                          
-    ID_historial INT NOT NULL,                     
-    Tipo ENUM('sistema','recordatorio','sugerencia') NOT NULL, 
-    Mensaje TEXT NOT NULL,                          
-    Fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,       
-    Leida BOOLEAN DEFAULT FALSE,                    
-    Estado BOOLEAN DEFAULT TRUE,                    
-
-    FOREIGN KEY (ID_usuario) REFERENCES USUARIOS(ID_usuario)
-        ON DELETE CASCADE,
-    FOREIGN KEY (ID_historial) REFERENCES HISTORIAL(ID_historial)
-        ON DELETE CASCADE
-);
-
--- /////////////////////////////////////////////////////////////////////////////
 -- --------------------------
 -- Módulos financieros y movimientos
 -- --------------------------
-
 CREATE TABLE Modulos_financieros (
     ID_modulo INT PRIMARY KEY,
     Nombre VARCHAR(100) NOT NULL,
@@ -79,13 +40,14 @@ CREATE TABLE Modulos_financieros (
     FOREIGN KEY (ID_usuario) REFERENCES USUARIOS(ID_usuario)
 );
 
+
 CREATE TABLE MOVIMIENTOS (
     ID_movimiento INT AUTO_INCREMENT PRIMARY KEY,
     ID_modulo INT NOT NULL,
     Tipo ENUM('Entrada','Salida') NOT NULL,
     FOREIGN KEY (ID_modulo) REFERENCES MODULOS_FINANCIEROS(ID_modulo)
 );
-
+-- -------------------------------------------------------------------------------------------
 
 -- ==============================================
 --     ENTRADA: Ahorros/Ingresos
@@ -97,7 +59,7 @@ CREATE TABLE ENTRADA (
     FOREIGN KEY (ID_movimiento) REFERENCES MOVIMIENTOS(ID_movimiento)
 );
 
--- --------------------------------------------------------------------------
+
 CREATE TABLE AHORROS (
     ID_ahorros INT AUTO_INCREMENT PRIMARY KEY,
     ID_entrada INT NOT NULL,
@@ -123,16 +85,19 @@ CREATE TABLE INGRESOS (
     FOREIGN KEY (ID_categoria) REFERENCES CATEGORIAS(ID_categoria)
 );
 
+
 -- ==============================================
 --    SALIDA: Gastos/Imprevistos/Deudas
 -- ==============================================
+
 CREATE TABLE SALIDA (
     ID_salida INT AUTO_INCREMENT PRIMARY KEY,
     ID_movimiento INT NOT NULL,
     FOREIGN KEY (ID_movimiento) REFERENCES MOVIMIENTOS(ID_movimiento)
 );
 
--- --------------------------------------------------------------------------------
+
+
 CREATE TABLE GASTOS (
     ID_gastos INT AUTO_INCREMENT PRIMARY KEY,
     ID_salida INT NOT NULL,
@@ -169,13 +134,53 @@ CREATE TABLE DEUDAS (
     FOREIGN KEY (ID_categoria) REFERENCES CATEGORIAS(ID_categoria)
 );
 
+-- -------------------------------------------------------------------------------------------
+
 -- =======================
---     TABLA: categorias
+--     TABLA: dependientes 
+-- =======================
+CREATE TABLE DEPENDIENTES (
+    ID_dependientes  INT AUTO_INCREMENT PRIMARY KEY,
+    Nombre VARCHAR(100) NOT NULL,
+    Ocupacion VARCHAR(150),
+    Edad INT,
+    Relacion VARCHAR(100),
+    ID_usuario INT NOT NULL,
+    FOREIGN KEY (ID_usuario) REFERENCES USUARIOS(ID_usuario)
+);
+
+-- =======================
+--     TABLA: historial
 -- =======================
 
-CREATE TABLE CATEGORIAS (
-    ID_categoria INT AUTO_INCREMENT PRIMARY KEY,  
-    Nombre VARCHAR(50) NOT NULL,                  
-    Color CHAR(7),                                
-    Icono VARCHAR(255)                           
+
+CREATE TABLE historial (
+    ID_historial INT AUTO_INCREMENT PRIMARY KEY,
+    ID_usuario INT NOT NULL,
+    accion VARCHAR(200) NOT NULL,    
+    detalles TEXT,               
+    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (ID_usuario) REFERENCES USUARIOS(ID_usuario)
+        ON DELETE CASCADE
+);
+
+
+-- =======================
+--     TABLA: notificaciones
+-- =======================
+CREATE TABLE NOTIFICACIONES (
+    ID_notificacion INT AUTO_INCREMENT PRIMARY KEY,   
+    ID_usuario INT NOT NULL,                          
+    ID_historial INT NOT NULL,                     
+    Tipo ENUM('sistema','recordatorio','sugerencia') NOT NULL, 
+    Mensaje TEXT NOT NULL,                          
+    Fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,       
+    Leida BOOLEAN DEFAULT FALSE,                    
+    Estado BOOLEAN DEFAULT TRUE,                    
+
+    FOREIGN KEY (ID_usuario) REFERENCES USUARIOS(ID_usuario)
+        ON DELETE CASCADE,
+    FOREIGN KEY (ID_historial) REFERENCES HISTORIAL(ID_historial)
+        ON DELETE CASCADE
 );
