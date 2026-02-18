@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Movimientos Financieros</title>
+</head>
+<body>
+<!-- {% include 'navbar.html' %} -->
+    
+    <div class="inf-container">
+    <h2>Movimientos Financieros</h2>
+
+        <div class="inf-listas">
+            {% for movimiento in movimientos %}
+            <div class="general-card">
+                <p><strong>ID Movimiento:</strong> {{ movimiento.id_movimiento }}</p>
+                <p><strong>Módulo:</strong> {{ movimiento.subtipo_modulo }}</p>
+                <p><strong>Monto:</strong> ${{ "{:,.2f}".format(movimiento.monto) }}</p>
+                <p><strong>Fecha:</strong> {{ movimiento.fecha_registro }}</p>
+
+                {# Lógica específica según el tipo de módulo #}
+                
+                {% if movimiento.subtipo_modulo == 'Ahorro' %}
+                    <p><strong>Meta:</strong> {{ movimiento.meta }}</p>
+                    <p><strong>Fecha Meta:</strong> {{ movimiento.fecha_meta or 'N/A' }}</p>
+                {% elif movimiento.subtipo_modulo == 'Ingreso' %}
+                    <p><strong>Fuente:</strong> {{ movimiento.fuente }}</p>
+                {% elif movimiento.subtipo_modulo == 'Deuda' %}
+                    <p><strong>Acreedor:</strong> {{ movimiento.fuente }}</p>
+                    <p><strong>Estado:</strong> 
+                        <span class="badge {{ 'pagada' if movimiento.estado == 'pagada' else 'pendiente' }}">
+                            {{ movimiento.estado|capitalize }}
+                        </span>
+                    </p>
+                {% elif movimiento.subtipo_modulo == 'Imprevisto' %}
+                    <p><strong>Causa:</strong> {{ movimiento.causa }}</p>
+                {% endif %}
+
+                <p><strong>Descripción:</strong> {{ movimiento.descripcion or 'Sin descripción' }}</p>
+                
+                <!-- <div class="acciones">
+                    <a href="{{ url_for('actualizar_usuario', id=usuario.id) }}" class="btn-editar">Editar</a>
+                    <form action="{{ url_for('eliminar_usuario', id=usuario.id) }}" method="POST" onsubmit="return confirm('¿Estás seguro de eliminar este usuario?');">
+                        <button type="submit" class="btn-eliminar">Eliminar</button>                    
+                    </form>
+                </div> -->
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+<!-- {% include 'footer.html' %} -->
+</body>
+</html>

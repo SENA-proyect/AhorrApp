@@ -1,5 +1,4 @@
 from flask import Flask, flash, redirect, url_for, render_template, request, session
-
 from flask_session import Session
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
@@ -41,7 +40,118 @@ def get_db_connection():
 @app.route('/')
 def index():
     return render_template ('index.html')
+# ======================================================================
+# ------------------ PANEL GENERAL - ADMINISTRADOR ------------------
+# ======================================================================
+@app.route('/generalpanel')
+def generalpanel():
+    if 'logged_in' in session and session.get('rol') == 0:
+        return render_template('generalpanel.html')
+    return redirect(url_for('login'))
 
+# --- PANEL DE USUARIOS ---
+@app.route('/panelUsers')
+def panelUsers():
+    if 'logged_in' in session and session.get('rol') == 0:
+        try:
+            conn = mysql.connector.connect(**db_config)
+            cursor = conn.cursor(dictionary=True)
+            cursor.execute('SELECT * FROM usuarios')
+            usuarios = cursor.fetchall()
+            return render_template('panelUsers.html', usuarios=usuarios)
+        except mysql.connector.Error as err:
+            flash(f'Error: {err}', 'danger')
+            return redirect(url_for('index')) 
+        finally:
+            cursor.close()
+            conn.close()
+    return redirect(url_for('login'))
+
+@app.route('/panelMovements')
+def panelMovements():
+    if 'logged_in' in session and session.get('rol') == 0:
+        try:
+            conn = mysql.connector.connect(**db_config)
+            cursor = conn.cursor(dictionary=True)
+            query_movimientos = """
+                SELECT 
+                    M.ID_movimiento, M.Subtipo_Modulo, M.Tipo_Flujo, M.Fecha_Creacion,
+                    COALESCE(A.Monto, I.Monto, G.Monto, IMP.Monto, D.Monto) AS monto,
+                    COALESCE(A.Descripcion, I.Descripcion, G.Descripcion, D.Descripcion) AS descripcion,
+                    COALESCE(A.Fecha_registro, I.Fecha_registro, G.Fecha_registro, IMP.Fecha_registro) AS fecha_registro,
+                    A.Meta, A.Fecha_meta, I.Fuente AS fuente_ingreso,
+                    D.Fuente AS fuente_deuda, D.Estado AS estado, IMP.Causa AS causa
+                FROM MOVIMIENTOS M
+                LEFT JOIN ENTRADA E ON M.ID_movimiento = E.ID_movimiento
+                LEFT JOIN SALIDA S ON M.ID_movimiento = S.ID_movimiento
+                LEFT JOIN AHORROS A ON E.ID_entrada = A.ID_entrada
+                LEFT JOIN INGRESOS I ON E.ID_entrada = I.ID_entrada
+                LEFT JOIN GASTOS G ON S.ID_salida = G.ID_salida
+                LEFT JOIN IMPREVISTOS IMP ON S.ID_salida = IMP.ID_salida
+                LEFT JOIN DEUDAS D ON S.ID_salida = D.ID_salida
+                ORDER BY M.Fecha_Creacion DESC
+            """
+            cursor.execute(query_movimientos)
+            movimientos = cursor.fetchall()
+            return render_template('panelMovements.html', movimientos=movimientos)
+        except mysql.connector.Error as err:
+            flash(f'Error: {err}', 'danger')
+            return redirect(url_for('index')) 
+        finally:
+            cursor.close()
+            conn.close()
+    return redirect(url_for('login'))
+
+# --- PANEL DE DEPENDIENTES ---
+@app.route('/panelDependents')
+def panelDependents():
+    if 'logged_in' in session and session.get('rol') == 0:
+        try:
+            conn = mysql.connector.connect(**db_config)
+            cursor = conn.cursor(dictionary=True)
+            query_dependientes = """
+                SELECT D.*, U.nombre AS usuario_nombre 
+                FROM DEPENDIENTES D
+                INNER JOIN USUARIOS U ON D.ID_usuario = U.ID_usuario
+            """
+            cursor.execute(query_dependientes)
+            dependientes = cursor.fetchall()
+            return render_template('panelDependents.html', dependientes=dependientes)
+        except mysql.connector.Error as err:
+            flash(f'Error: {err}', 'danger')
+            return redirect(url_for('index')) 
+        finally:
+            cursor.close()
+            conn.close()
+    return redirect(url_for('login'))
+
+# --- PANEL DE HISTORIAL ---
+@app.route('/panelHistory')
+def panelHistory():
+    if 'logged_in' in session and session.get('rol') == 0:
+        try:
+            conn = mysql.connector.connect(**db_config)
+            cursor = conn.cursor(dictionary=True)
+            query_historial = """
+                SELECT H.*, U.nombre AS usuario_nombre 
+                FROM HISTORIAL H
+                INNER JOIN USUARIOS U ON H.ID_usuario = U.ID_usuario
+                ORDER BY H.fecha DESC
+            """
+            cursor.execute(query_historial)
+            historial = cursor.fetchall()
+            return render_template('panelHistory.html', historial=historial)
+        except mysql.connector.Error as err:
+            flash(f'Error: {err}', 'danger')
+            return redirect(url_for('index')) 
+        finally:
+            cursor.close()
+            conn.close()
+    return redirect(url_for('login'))
+
+# ======================================================================
+# ------------------ Login & Register (OF) ------------------
+# ======================================================================
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -87,8 +197,6 @@ def login():
 
     return render_template('login.html')
 
-
-
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -133,6 +241,9 @@ def register():
 
     return render_template('register.html')
 
+# ======================================================================
+# ------------------ Logout ------------------
+# ======================================================================
 @app.route('/logout')
 def logout():
     session.pop('logged_in', None)

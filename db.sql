@@ -47,28 +47,14 @@ CREATE TABLE IF NOT EXISTS CATEGORIAS (
 -- --------------------------
 -- Módulos financieros y movimientos
 -- --------------------------
-
-
-CREATE TABLE IF NOT EXISTS MODULOS_FINANCIEROS (
-    ID_modulo INT PRIMARY KEY AUTO_INCREMENT COMMENT 'Identificador único del módulo financiero',
-    Nombre VARCHAR(100) NOT NULL COMMENT 'Nombre del módulo financiero',
-    ID_usuario INT NOT NULL COMMENT 'Usuario propietario del módulo financiero',
-    FOREIGN KEY (ID_usuario) REFERENCES USUARIOS(ID_usuario) 
-        ON DELETE CASCADE
-        ON UPDATE CASCADE
-)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-
-
-
 CREATE TABLE IF NOT EXISTS MOVIMIENTOS (
-    ID_movimiento INT AUTO_INCREMENT PRIMARY KEY COMMENT 'Identificador único del movimiento financiero',
-    ID_modulo INT NOT NULL COMMENT 'Módulo financiero al que pertenece el movimiento',
-    Tipo ENUM('Entrada','Salida') NOT NULL COMMENT 'Tipo de movimiento: entrada o salida',
-    FOREIGN KEY (ID_modulo) REFERENCES MODULOS_FINANCIEROS(ID_modulo)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE
-)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    ID_movimiento INT AUTO_INCREMENT PRIMARY KEY,
+
+    Tipo_Flujo TINYINT NOT NULL COMMENT '1=Ingreso/Entrada, 2=Egreso/Salida',
+
+    Subtipo_Modulo ENUM('Ahorro', 'Ingreso', 'Gasto', 'Deuda', 'Imprevisto') NOT NULL,
+    Fecha_Creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
 
 
 -- ==============================================
@@ -83,8 +69,6 @@ CREATE TABLE IF NOT EXISTS ENTRADA (
         ON DELETE CASCADE
         ON UPDATE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-
 
 
 CREATE TABLE IF NOT EXISTS AHORROS (
@@ -105,8 +89,6 @@ CREATE TABLE IF NOT EXISTS AHORROS (
         ON DELETE SET NULL
         ON UPDATE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-
 
 
 CREATE TABLE IF NOT EXISTS INGRESOS (
@@ -131,7 +113,6 @@ CREATE TABLE IF NOT EXISTS INGRESOS (
 --    SALIDA: Gastos/Imprevistos/Deudas
 -- ==============================================
 
-
 CREATE TABLE IF NOT EXISTS SALIDA (
     ID_salida INT AUTO_INCREMENT PRIMARY KEY COMMENT 'Identificador único de la salida',
     ID_movimiento INT NOT NULL COMMENT 'Movimiento asociado a la tabla de salida',
@@ -139,9 +120,6 @@ CREATE TABLE IF NOT EXISTS SALIDA (
         ON DELETE CASCADE
         ON UPDATE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-
-
 
 CREATE TABLE IF NOT EXISTS GASTOS (
     ID_gastos INT AUTO_INCREMENT PRIMARY KEY COMMENT 'Identificador único del gasto',
@@ -160,8 +138,6 @@ CREATE TABLE IF NOT EXISTS GASTOS (
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
-
-
 CREATE TABLE IF NOT EXISTS IMPREVISTOS (
     ID_imprevistos INT AUTO_INCREMENT PRIMARY KEY COMMENT 'Identificador único del imprevisto',
     ID_salida INT NOT NULL COMMENT 'Tabla de salida financiera asociada al imprevisto',
@@ -177,8 +153,6 @@ CREATE TABLE IF NOT EXISTS IMPREVISTOS (
         ON DELETE SET NULL
         ON UPDATE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-
 
 
 CREATE TABLE IF NOT EXISTS DEUDAS (
@@ -257,3 +231,34 @@ CREATE TABLE IF NOT EXISTS NOTIFICACIONES (
         ON UPDATE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- -------------------------------------------------------------------------------------------
+-- ========================= BORRAR =========================
+-- -------------------------------------------------------------------------------------------
+-- CREATE TABLE IF NOT EXISTS MOVIMIENTOS (
+--     ID_movimiento INT AUTO_INCREMENT PRIMARY KEY,
+--     Subtipo_Modulo ENUM('Ahorro', 'Ingreso', 'Gasto', 'Deuda', 'Imprevisto') NOT NULL,
+    
+--     -- Columna generada automáticamente:
+--     -- Si es Ahorro o Ingreso -> 1 (Entrada)
+--     -- Si es Gasto, Deuda o Imprevisto -> 2 (Salida)
+--     Tipo_Flujo TINYINT GENERATED ALWAYS AS (
+--         CASE 
+--             WHEN Subtipo_Modulo IN ('Ahorro', 'Ingreso') THEN 1
+--             WHEN Subtipo_Modulo IN ('Gasto', 'Deuda', 'Imprevisto') THEN 2
+--         END
+--     ) STORED COMMENT '1=Entrada, 2=Salida',
+    
+--     Fecha_Creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+-- ) ENGINE=InnoDB;
+
+-- --------------------------
+-- Módulos financieros y movimientos
+-- --------------------------
+-- CREATE TABLE IF NOT EXISTS MOVIMIENTOS (
+--     ID_movimiento INT AUTO_INCREMENT PRIMARY KEY COMMENT 'Identificador único del movimiento financiero',
+--     ID_modulo INT NOT NULL COMMENT 'Módulo financiero al que pertenece el movimiento',
+--     Tipo ENUM('Entrada','Salida') NOT NULL COMMENT 'Tipo de movimiento: entrada o salida',
+--     FOREIGN KEY (ID_modulo) REFERENCES MODULOS_FINANCIEROS(ID_modulo)
+--         ON DELETE CASCADE
+--         ON UPDATE CASCADE
+-- )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
