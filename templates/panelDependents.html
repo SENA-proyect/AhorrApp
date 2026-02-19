@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Dependientes</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/panel.css') }}">
 </head>
 <body>
 <!-- {% include 'navbar.html' %} -->
@@ -13,17 +14,13 @@
         <div class="inf-listas">
             {% for dependiente in dependientes %}
             <div class="general-card">
-                <p><strong>Dependiente de:</strong> {{ dependiente.usuario_nombre }}</p>
-                <p><strong>Nombre:</strong> {{ dependiente.nombre }}</p>
-                <p><strong>Relación:</strong> {{ dependiente.relacion }}</p>
-                <p><strong>Ocupación:</strong> {{ dependiente.ocupacion or 'N/A' }}</p>
-                <p><strong>Fecha Nac.:</strong> {{ dependiente.fecha_nacimiento }}</p>
-                <!-- <div class="acciones">
-                    <a href="{{ url_for('actualizar_usuario', id=usuario.id) }}" class="btn-editar">Editar</a>
-                    <form action="{{ url_for('eliminar_usuario', id=usuario.id) }}" method="POST" onsubmit="return confirm('¿Estás seguro de eliminar este usuario?');">
-                        <button type="submit" class="btn-eliminar">Eliminar</button>                    
-                    </form>
-                </div> -->
+                <p><strong>ID:</strong> {{ dependiente.ID_dependientes }}</p> 
+                <p><strong>Dependiente de:</strong> {{ dependiente.usuario_nombre }}</p> 
+                <p><strong>Nombre:</strong> {{ dependiente.Nombre }}</p>
+                <p><strong>Relación:</strong> {{ dependiente.Relacion }}</p>
+                <p><strong>Ocupación:</strong> {{ dependiente.Ocupacion or 'N/A' }}</p>
+                <p><strong>Fecha Nac.:</strong> {{ dependiente.Fecha_nacimiento }}</p>
+
             </div>
             {% endfor %}
         </div>

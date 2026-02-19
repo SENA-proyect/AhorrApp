@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Panel de Usuarios</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/panel.css') }}">
 </head>
 <body>
     <!-- {% include 'navbar.html' %} -->
@@ -13,23 +14,18 @@
         <div class="inf-listas">
             {% for usuario in usuarios %}
             <div class="general-card">
-                <p><strong>ID:</strong> {{ usuario.id }}</p>
-                <p><strong>Nombre:</strong> {{ usuario.nombre }}</p>
-                <p><strong>Apellido:</strong> {{ usuario.apellido }}</p>            
-                <p><strong>Email:</strong> {{ usuario.email }}</p>
+                <p><strong>ID:</strong> {{ usuario.ID_usuario }}</p>
+                <p><strong>Nombre:</strong> {{ usuario.Nombre }}</p>
+                <p><strong>Apellido:</strong> {{ usuario.Apellido if usuario.Apellido else 'No asignado' }}</p>            
+                <p><strong>Email:</strong> {{ usuario.Email }}</p>
                 <p><strong>Rol:</strong> 
-                    {% if usuario.rol == 0 %} <!-- CAMBIAR A 1 DESPUES -->
-                        Administrador
+                    {% if usuario.Rol == 'Administrador' %}
+                        <span class="badge-admin">Administrador</span>
                     {% else %}
-                        Usuario
+                        <span class="badge-user">Usuario</span>
                     {% endif %}
                 </p>
-                <!-- <div class="acciones">
-                    <a href="{{ url_for('actualizar_usuario', id=usuario.id) }}" class="btn-editar">Editar</a>
-                    <form action="{{ url_for('eliminar_usuario', id=usuario.id) }}" method="POST" onsubmit="return confirm('¿Estás seguro de eliminar este usuario?');">
-                        <button type="submit" class="btn-eliminar">Eliminar</button>
-                    </form>
-                </div> -->
+            
             </div>
             {% endfor %}
         </div>

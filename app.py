@@ -17,8 +17,8 @@ import mysql.connector
 db_config = {
     'host': 'localhost',
     'user': 'AhorrApp',
-    'password': 'password',
-    'database': 'proyecto'
+    'password': 'Ah0rrApp_2026!',
+    'database': 'SEproyectoNA'
 }
 
 
@@ -45,20 +45,22 @@ def index():
 # ======================================================================
 @app.route('/generalpanel')
 def generalpanel():
-    if 'logged_in' in session and session.get('rol') == 0:
-        return render_template('generalpanel.html')
-    return redirect(url_for('login'))
+        if 'logged_in' in session:
+            # and session.get('rol') == 'Usuario':
+            return render_template('generalpanel.html')
+        return redirect(url_for('index.html'))
 
 # --- PANEL DE USUARIOS ---
-@app.route('/panelUsers')
-def panelUsers():
-    if 'logged_in' in session and session.get('rol') == 0:
+@app.route('/panelUser')
+def panelUser():
+    if 'logged_in' in session:
+    # and session.get('rol') == 'Usuario':
         try:
             conn = mysql.connector.connect(**db_config)
             cursor = conn.cursor(dictionary=True)
             cursor.execute('SELECT * FROM usuarios')
             usuarios = cursor.fetchall()
-            return render_template('panelUsers.html', usuarios=usuarios)
+            return render_template('panelUser.html', usuarios=usuarios)
         except mysql.connector.Error as err:
             flash(f'Error: {err}', 'danger')
             return redirect(url_for('index')) 
@@ -69,18 +71,28 @@ def panelUsers():
 
 @app.route('/panelMovements')
 def panelMovements():
-    if 'logged_in' in session and session.get('rol') == 0:
+    if 'logged_in' in session:
+        # and session.get('rol') == 0:
         try:
             conn = mysql.connector.connect(**db_config)
             cursor = conn.cursor(dictionary=True)
             query_movimientos = """
                 SELECT 
-                    M.ID_movimiento, M.Subtipo_Modulo, M.Tipo_Flujo, M.Fecha_Creacion,
-                    COALESCE(A.Monto, I.Monto, G.Monto, IMP.Monto, D.Monto) AS monto,
-                    COALESCE(A.Descripcion, I.Descripcion, G.Descripcion, D.Descripcion) AS descripcion,
-                    COALESCE(A.Fecha_registro, I.Fecha_registro, G.Fecha_registro, IMP.Fecha_registro) AS fecha_registro,
-                    A.Meta, A.Fecha_meta, I.Fuente AS fuente_ingreso,
-                    D.Fuente AS fuente_deuda, D.Estado AS estado, IMP.Causa AS causa
+                    M.ID_movimiento, 
+                    M.Subtipo_Modulo, 
+                    M.Tipo_Flujo, 
+                    M.Fecha_Creacion,
+
+                    COALESCE(A.Monto, I.Monto, G.Monto, IMP.Monto, D.Monto) AS Monto,
+                    COALESCE(A.Descripcion, I.Descripcion, G.Descripcion, D.Descripcion) AS Descripcion,
+                    COALESCE(A.Fecha_registro, I.Fecha_registro, G.Fecha_registro, IMP.Fecha_registro, D.Fecha_inicio) AS Fecha_registro,
+
+                    A.Meta, 
+                    A.Fecha_meta, 
+
+                    COALESCE(I.Fuente, D.Fuente) AS Fuente,
+                    D.Estado, 
+                    IMP.Causa
                 FROM MOVIMIENTOS M
                 LEFT JOIN ENTRADA E ON M.ID_movimiento = E.ID_movimiento
                 LEFT JOIN SALIDA S ON M.ID_movimiento = S.ID_movimiento
@@ -90,7 +102,8 @@ def panelMovements():
                 LEFT JOIN IMPREVISTOS IMP ON S.ID_salida = IMP.ID_salida
                 LEFT JOIN DEUDAS D ON S.ID_salida = D.ID_salida
                 ORDER BY M.Fecha_Creacion DESC
-            """
+                """
+
             cursor.execute(query_movimientos)
             movimientos = cursor.fetchall()
             return render_template('panelMovements.html', movimientos=movimientos)
@@ -105,7 +118,8 @@ def panelMovements():
 # --- PANEL DE DEPENDIENTES ---
 @app.route('/panelDependents')
 def panelDependents():
-    if 'logged_in' in session and session.get('rol') == 0:
+    if 'logged_in' in session:
+        # and session.get('rol') == 0:
         try:
             conn = mysql.connector.connect(**db_config)
             cursor = conn.cursor(dictionary=True)
@@ -128,12 +142,13 @@ def panelDependents():
 # --- PANEL DE HISTORIAL ---
 @app.route('/panelHistory')
 def panelHistory():
-    if 'logged_in' in session and session.get('rol') == 0:
+    if 'logged_in' in session:
+        # and session.get('rol') == 0:
         try:
             conn = mysql.connector.connect(**db_config)
             cursor = conn.cursor(dictionary=True)
             query_historial = """
-                SELECT H.*, U.nombre AS usuario_nombre 
+                SELECT H.*, U.Nombre AS usuario_nombre 
                 FROM HISTORIAL H
                 INNER JOIN USUARIOS U ON H.ID_usuario = U.ID_usuario
                 ORDER BY H.fecha DESC
@@ -156,11 +171,12 @@ def panelHistory():
 def login():
     if request.method == 'POST':
         email = request.form.get('email')
-        contrasena = request.form.get('password')
+        Password_hash = request.form.get('password')
 
-        if not email or not contrasena:
+        if not email or not Password_hash:
             flash('Por favor completa todos los campos.', 'danger')
             return redirect(url_for('login'))
+            
 
         conn = None
         cursor = None
@@ -174,11 +190,11 @@ def login():
             usuario = cursor.fetchone()
 
             # Verificar si existe y si la contraseña es correcta
-            if usuario and check_password_hash(usuario['contrasena'], contrasena):
+            if usuario and check_password_hash(usuario['Password_hash'], Password_hash):
                 session['logged_in'] = True
-                session['username'] = usuario['nombre']
-                session['useremail'] = usuario['email']
-                session['user_id'] = usuario['id']
+                session['username'] = usuario['Nombre']
+                session['useremail'] = usuario['Email']
+                session['user_id'] = usuario['ID_usuario']
 
                 flash('Inicio de sesión exitoso.', 'success')
                 return redirect(url_for('index'))
@@ -200,12 +216,12 @@ def login():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        nombre = request.form['nombre']
-        email = request.form['email']
-        contrasena = request.form['password']
+        nombre = request.form.get('nombre')
+        email = request.form.get('email')
+        password = request.form.get('password') 
+        rol = 'Usuario' 
 
-        # Validar campos vacíos
-        if not nombre or not email or not contrasena:
+        if not nombre or not email or not password:
             flash('Todos los campos son obligatorios.', 'danger')
             return redirect(url_for('register'))
 
@@ -213,28 +229,24 @@ def register():
         cursor = conexion.cursor()
 
         try:
-            # Verificar si el correo ya está registrado
-            cursor.execute("SELECT id FROM usuarios WHERE email = %s", (email,))
+            cursor.execute("SELECT ID_usuario FROM USUARIOS WHERE Email = %s", (email,))
             if cursor.fetchone():
                 flash('El email ya está registrado.', 'danger')
                 return redirect(url_for('register'))
 
-            # Encriptar la contraseña
-            hashed_password = generate_password_hash(contrasena)
+            hashed_pw = generate_password_hash(password)
 
-            # Insertar nuevo usuario
-            cursor.execute(
-                "INSERT INTO usuarios (nombre, email, contrasena) VALUES (%s, %s, %s)",
-                (nombre, email, hashed_password)
-            )
+            sql = """INSERT INTO USUARIOS (Nombre, Email, Password_hash, Rol) 
+                     VALUES (%s, %s, %s, %s)"""
+            cursor.execute(sql, (nombre, email, hashed_pw, rol))
+            
             conexion.commit()
-            # flash('Usuario registrado correctamente.', 'success')
+            flash('Registro exitoso. ¡Inicia sesión!', 'success')
             return redirect(url_for('login'))
 
         except Exception as e:
             conexion.rollback()
-            # flash('Error al registrar usuario: ' + str(e), 'danger')
-
+            flash(f'Error en el servidor: {str(e)}', 'danger')
         finally:
             cursor.close()
             conexion.close()

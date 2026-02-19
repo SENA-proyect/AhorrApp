@@ -49,9 +49,7 @@ CREATE TABLE IF NOT EXISTS CATEGORIAS (
 -- --------------------------
 CREATE TABLE IF NOT EXISTS MOVIMIENTOS (
     ID_movimiento INT AUTO_INCREMENT PRIMARY KEY,
-
     Tipo_Flujo TINYINT NOT NULL COMMENT '1=Ingreso/Entrada, 2=Egreso/Salida',
-
     Subtipo_Modulo ENUM('Ahorro', 'Ingreso', 'Gasto', 'Deuda', 'Imprevisto') NOT NULL,
     Fecha_Creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
