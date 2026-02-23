@@ -6,3 +6,7 @@ agregar:
                     </form>
                 </div> -->
 en las pantallas de los paneles de control para acceder a los botones de actualizar y borrar.
+
+Instalador de dependencias, programas y frameworks
+winget install --id Oracle.MySQL -e
+pip install flask flask-session werkzeug mysql-connector-python
