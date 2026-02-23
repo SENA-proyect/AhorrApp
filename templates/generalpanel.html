@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de control - ADMINISTRADOR</title>
+    <title>Panel de control general - ADMINISTRADOR</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/panel.css') }}">
 </head>
 <body>
@@ -12,8 +12,31 @@
     <!-- -------------------------------------------------------------------------------------------------------------------------------- -->
     <!-- <<=========================== TABLAS DE LOS USUARIOS =========================== -->
     <!-- -------------------------------------------------------------------------------------------------------------------------------- -->
+    
+        <div class="inf-container">
+            <h2>Tablas generales del panel de control</h2>
 
+            <div class="inf-listas">
+                <div class="general-card">
+                    <p><a class="btn btn-secondary btn-lg" href="{{ url_for('panelDependents') }}"><strong>panel de dependientes</strong></a></p>
+                </div>
 
+                <div class="general-card">
+                    <p><a class="btn btn-secondary btn-lg" href="{{ url_for('panelHistory') }}"><strong>panel de historia</strong></a></p>
+                </div>
+
+                <div class="general-card">
+                    <p><a class="btn btn-secondary btn-lg" href="{{ url_for('panelMovements') }}"><strong>panel de movimientos</strong></a></p>
+                </div>
+
+                <div class="general-card">
+                    <p><a class="btn btn-secondary btn-lg" href="{{ url_for('panelUser') }}"><strong>panel de usuario</strong></a></p>
+                </div>
+            </div>
+
+        </div>
+
+    
     <!-- -------------------------------------------------------------------------------------------------------------------------------- -->
     <!-- <<=========================== TABLAS DE LOS MODULOS FINANCIEROS =========================== -->
     <!-- -------------------------------------------------------------------------------------------------------------------------------- -->
